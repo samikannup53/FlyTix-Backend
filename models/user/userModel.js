@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema(
     gender: { type: String, enum: ["Male", "Female", "Other"], required: true },
     password: { type: String, required: true },
     termsAccepted: { type: Boolean, required: true },
+    role: { type: String, enum: ["user", "admin"], default: "user" },
   },
   { timestamps: true }
 );

@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const User = require("../../models/user/userModel");
 
 async function registerUser(req, res) {
-  const { fullName, email, dob, gender, password, termsAccepted } = req.body;
+  const { fullName, email, dob, gender, password, termsAccepted } = req.body || {};
 
   try {
     // Validation
@@ -18,7 +18,7 @@ async function registerUser(req, res) {
     if (!gender) {
       return res.status(400).json({ msg: "Gender is Required" });
     }
-    if (!password && password.length < 8) {
+    if (!password || password.length < 8) {
       return res
         .status(400)
         .json({ msg: "Password is Required with Minimum 8 Characters" });
