@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!-- Head -->
+  <%- include('../partials/head') %>
+  <!-- Body -->
+  <body
+    class="min-h-screen flex flex-col bg-gradient-to-br from-yellow-100 via-orange-100 to-pink-200"
+  >
+    <!-- Header -->
+    <%- include('../partials/homeHeader') %>
+
+    <!-- Main Content -->
+    <main>
+      <div
+        class="container mx-auto px-6 py-16 flex items-center justify-center flex-col lg:flex-row-reverse gap-20 min-h-[75vh]"
+      >
+        <!-- Right: Text Content -->
+        <section class="basis-2/3 text-center lg:text-left space-y-6 max-w-xl">
+          <img
+            src="https://i.pravatar.cc/100?u=authflow"
+            alt="Welcome Avatar"
+            class="mx-auto lg:mx-0 w-24 h-24 rounded-full shadow-lg"
+          />
+          <h2 class="text-4xl font-bold text-gray-800">
+            Welcome to <span class="text-orange-600">AuthFlow</span>
+          </h2>
+          <p class="text-lg text-gray-700 leading-relaxed">
+            A secure and seamless authentication platform. <br />
+            Login or Register to get started with ease and security.
+          </p>
+          <p class="text-orange-500 italic text-sm">
+            <i class="fas fa-quote-left mr-1"></i> "Simplifying authentication,
+            one login at a time."
+          </p>
+        </section>
+
+        <!-- Left: Button Card -->
+        <aside class="basis-1/3 flex justify-center">
+          <div
+            class="w-80 bg-white/30 backdrop-blur-xl border border-white/20 shadow-2xl rounded-3xl px-8 py-10 flex flex-col justify-between space-y-8"
+          >
+            <!-- Heading -->
+            <div class="text-center">
+              <h3 class="text-2xl font-semibold text-gray-800 mb-2">
+                Get Started
+              </h3>
+              <p class="text-sm text-gray-700">
+                Join AuthFlow for secure and seamless access.
+              </p>
+            </div>
+
+            <!-- Buttons -->
+            <div class="space-y-4">
+              <a
+                href="/user/login"
+                class="flex items-center justify-center gap-2 bg-white/60 hover:bg-white text-gray-900 text-sm font-semibold py-2.5 px-6 rounded-full shadow-md transition"
+              >
+                <i class="fas fa-sign-in-alt"></i> Login
+              </a>
+              <a
+                href="/user/register"
+                class="flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold py-2.5 px-6 rounded-full shadow-md transition"
+              >
+                <i class="fas fa-user-plus"></i> Register
+              </a>
+            </div>
+
+            <!-- Security Message -->
+            <p
+              class="text-center text-xs text-orange-600 italic flex items-center justify-center gap-1"
+            >
+              <i class="fas fa-shield-alt text-orange-500 text-sm"></i>
+              Your credentials are protected with
+              <span class="font-medium">JWT</span>.
+            </p>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <%- include('../partials/homeFooter') %>
+    <!-- Script for Dynamic Scroll -->
+    <script src="/js/scroll.js"></script>
+  </body>
+</html>
