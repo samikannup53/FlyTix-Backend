@@ -5,7 +5,7 @@ async function registerUser(req, res) {
   const { fullName, email, dob, gender, password, termsAccepted } = req.body || {};
 
   try {
-    // Validation
+    // Input Validation
     if (!fullName) {
       return res.status(400).json({ msg: "Full Name is Required" });
     }
