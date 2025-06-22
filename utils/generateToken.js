@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 const generateToken = (userId, role) => {
-  const payload = { userId, role };
+  const payload = { id:userId, role };
   const secretKey = process.env.JWT_SECRET_KEY;
   const options = { expiresIn: "1d", issuer: "FlyTix" };
 

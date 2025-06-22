@@ -2,7 +2,7 @@ const User = require("../models/user/userModel");
 const verifyToken = require("../utils/verifyToken");
 
 async function authUser(req, res, next) {
-  const userAuthToken = requestAnimationFrame.cookies.userAuthToken;
+  const userAuthToken = req.cookies.userAuthToken;
 
   if (!userAuthToken) {
     return res.status(401).json({ msg: "Access Denied, No Token Provided" });
@@ -17,7 +17,7 @@ async function authUser(req, res, next) {
       .json({ msg: "Invalid or Expired Token, Please Login Again" });
   }
   try {
-    const user = await User.findById(payload.userId).select("-password");
+    const user = await User.findById(payload.id).select("-password");
     if (!user) {
       return res.status(401).json({ msg: "User Not Found" });
     }
