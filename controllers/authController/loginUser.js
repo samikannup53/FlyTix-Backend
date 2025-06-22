@@ -27,11 +27,11 @@ async function loginUser(req, res) {
     }
 
     // Create Token
-    const authToken = generateToken(user._id, user.role);
+    const userAuthToken = generateToken(user._id, user.role);
 
     // Send Token via Cookie
     res
-      .cookie("authToken", authToken, {
+      .cookie("userAuthToken", userAuthToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "Strict",
