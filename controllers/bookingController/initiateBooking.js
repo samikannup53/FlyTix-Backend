@@ -53,6 +53,7 @@ async function initiateBooking(req, res) {
       return segments.map((segment) => {
         return {
           from: {
+            cityCode: segment.departure.cityCode,
             city: segment.departure.city || "N/A",
             airport: segment.departure.airport,
             terminal: segment.departure.terminal,
@@ -60,6 +61,7 @@ async function initiateBooking(req, res) {
             time: segment.departure.time,
           },
           to: {
+            cityCode: segment.departure.cityCode,
             city: segment.arrival.city || "N/A",
             airport: segment.arrival.airport,
             terminal: segment.arrival.terminal,

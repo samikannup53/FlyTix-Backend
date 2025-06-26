@@ -29,6 +29,7 @@ const travellerSchema = new mongoose.Schema({
 // Journey Details
 const journeySchema = new mongoose.Schema({
   from: {
+    cityCode: { type: String, required: true },
     city: { type: String, required: true },
     airport: { type: String, required: true },
     terminal: { type: String, required: true },
@@ -36,6 +37,7 @@ const journeySchema = new mongoose.Schema({
     time: { type: String, required: true },
   },
   to: {
+    cityCode: { type: String, required: true },
     city: { type: String, required: true },
     airport: { type: String, required: true },
     terminal: { type: String, required: true },

@@ -7,6 +7,7 @@ const app = express();
 const authRoutes = require("./routes/authRoutes");
 const flightRoutes = require("./routes/flightRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
 
 // Middlewares
 app.use(cors());
@@ -16,5 +17,6 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/flights", flightRoutes);
 app.use("/api/booking", bookingRoutes);
+app.use("/api/payment", paymentRoutes);
 
 module.exports = app;
