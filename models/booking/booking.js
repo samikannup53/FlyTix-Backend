@@ -68,6 +68,7 @@ const bookingSchema = new mongoose.Schema({
     unique: true,
     index: true,
   },
+  pnr: { type: String, unique: true, sparse: true },
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   tripType: { type: String, enum: ["Oneway", "Roundtrip"], required: true },
   journey: [journeySchema],
@@ -98,12 +99,21 @@ const bookingSchema = new mongoose.Schema({
     enum: ["Pending", "Confirmed", "Cancelled"],
     default: "Pending",
   },
+  bookingInitiatedAt: { type: Date, default: Date.now },
+  bookingConfirmedAt: { type: Date },
   paymentStatus: {
     type: String,
     enum: ["Unpaid", "Paid", "Failed"],
     default: "Unpaid",
   },
-  bookingInitiatedAt: { type: Date, default: Date.now },
+  paymentDetails: {
+    gateway: { type: String, sparse: true },
+    orderId: { type: String, sparse: true },
+    paymentId: { type: String, sparse: true },
+    signature: { type: String, sparse: true },
+    paidAt: { type: Date, sparse: true },
+  },
+
   expiresAt: { type: Date },
 });
 

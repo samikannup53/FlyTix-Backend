@@ -5,6 +5,6 @@ const initiatePayment = require("../controllers/paymentController/initiatePaymen
 const verifyPayment = require("../controllers/paymentController/verifyPayment");
 
 router.post("/initiate", initiatePayment);
-router.get("/verify", verifyPayment);
+router.post("/verify", verifyPayment);
 
 module.exports = router;
