@@ -32,13 +32,15 @@ const journeySchema = new mongoose.Schema({
     city: { type: String, required: true },
     airport: { type: String, required: true },
     terminal: { type: String, required: true },
-    dateTime: { type: Date, required: true },
+    date: { type: String, required: true },
+    time: { type: String, required: true },
   },
   to: {
     city: { type: String, required: true },
     airport: { type: String, required: true },
     terminal: { type: String, required: true },
-    dateTime: { type: Date, required: true },
+    date: { type: String, required: true },
+    time: { type: String, required: true },
   },
   flightNumber: { type: String, required: true },
   airline: { type: String, required: true },
@@ -99,7 +101,7 @@ const bookingSchema = new mongoose.Schema({
     enum: ["Unpaid", "Paid", "Failed"],
     default: "Unpaid",
   },
-  bookedAt: { type: Date, default: Date.now },
+  bookingInitiatedAt: { type: Date, default: Date.now },
   expiresAt: { type: Date },
 });
 
