@@ -3,6 +3,6 @@ const router = express.Router();
 
 const initiatePayment = require("../controllers/paymentController/initiatePayment");
 
-router.get("/initiate", initiatePayment);
+router.post("/initiate", initiatePayment);
 
 module.exports = router;

@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { nanoid } = require("nanoid");
 
 // Generate Booking Reference ID
-function generateBookingReferenceId() {
+function generateBookingId() {
   const id = nanoid(8).toUpperCase();
   return `FLY-${id}`;
 }
@@ -61,9 +61,9 @@ const journeySchema = new mongoose.Schema({
 
 // Main Booking Schema
 const bookingSchema = new mongoose.Schema({
-  bookingReferenceId: {
+  bookingId: {
     type: String,
-    default: generateBookingReferenceId,
+    default: generateBookingId,
     required: true,
     unique: true,
     index: true,

@@ -106,10 +106,7 @@ async function initiateBooking(req, res) {
 
     res.status(201).json({
       msg: "Booking Initiated Successfully",
-      bookingId: newBooking._id,
-      bookingReferenceId: newBooking.bookingReferenceId,
-      bookingStatus: newBooking.bookingStatus,
-      paymentStatus: newBooking.paymentStatus,
+      newBooking,
     });
   } catch (error) {
     res
