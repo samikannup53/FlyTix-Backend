@@ -54,7 +54,7 @@ function summarizeAmadeusFlight(flight, meta = {}) {
   const taxes = (totalFare - baseFare).toFixed(2);
 
   return {
-    id: flight.id,
+    flightId: flight.id,
     validatingAirline: flight.validatingAirlineCodes?.[0] || "N/A",
 
     outbound: {

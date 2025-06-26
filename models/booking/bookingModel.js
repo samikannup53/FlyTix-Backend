@@ -1,4 +1,11 @@
 const mongoose = require("mongoose");
+const { nanoid } = require("nanoid");
+
+// Generate Booking Reference ID
+function generateBookingReferenceId() {
+  const id = nanoid(8).toUpperCase();
+  return `FLY-${id}`;
+}
 
 // Individual Traveller Details
 const travellerSchema = new mongoose.Schema({
@@ -16,7 +23,6 @@ const travellerSchema = new mongoose.Schema({
     type: String,
     enum: ["No Preference", "Window", "Aisle", "Middle"],
     default: "No Preference",
-    required: false,
   },
 });
 
@@ -24,33 +30,40 @@ const travellerSchema = new mongoose.Schema({
 const journeySchema = new mongoose.Schema({
   from: {
     city: { type: String, required: true },
-    airport: { type: String, required: false },
-    terminal: { type: Number, required: false },
+    airport: { type: String, required: true },
+    terminal: { type: String, required: true },
     dateTime: { type: Date, required: true },
   },
   to: {
     city: { type: String, required: true },
-    airport: { type: String, required: false },
-    terminal: { type: Number, required: false },
+    airport: { type: String, required: true },
+    terminal: { type: String, required: true },
     dateTime: { type: Date, required: true },
   },
-  class: {
+  flightNumber: { type: String, required: true },
+  airline: { type: String, required: true },
+  duration: { type: String, required: true },
+  stops: { type: Number, required: true },
+  travelClass: {
     type: String,
     enum: ["Economy", "Premium Economy", "Business", "First"],
     required: true,
   },
-  stops: { type: Number, required: true },
-  duration: { type: String, required: true },
-  airline: { type: String, required: true },
-  flightNumber: { type: String, required: true },
   baggage: {
-    cabin: { type: String, required: false },
-    checkIn: { type: String, required: false },
+    cabin: { type: String, required: true },
+    checkIn: { type: String, required: true },
   },
 });
 
 // Main Booking Schema
 const bookingSchema = new mongoose.Schema({
+  bookingReferenceId: {
+    type: String,
+    default: generateBookingReferenceId,
+    required: true,
+    unique: true,
+    index: true,
+  },
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   tripType: { type: String, enum: ["Oneway", "Roundtrip"], required: true },
   journey: [journeySchema],
@@ -58,8 +71,8 @@ const bookingSchema = new mongoose.Schema({
   contactDetails: {
     email: { type: String, required: true },
     mobileNumber: {
-      countryCode: { type: String, required: false },
-      number: { type: Number, required: true },
+      countryCode: { type: String },
+      number: { type: String, required: true },
     },
   },
   billingAddress: {
@@ -74,6 +87,7 @@ const bookingSchema = new mongoose.Schema({
     taxesAndFees: { type: Number, required: true },
     instantDiscount: { type: Number, default: 0 },
     totalFare: { type: Number, required: true },
+    currency: { type: String, default: "INR" },
   },
   bookingStatus: {
     type: String,
@@ -86,7 +100,11 @@ const bookingSchema = new mongoose.Schema({
     default: "Unpaid",
   },
   bookedAt: { type: Date, default: Date.now },
+  expiresAt: { type: Date },
 });
+
+// TTL Index
+bookingSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 const Booking = mongoose.model("Booking", bookingSchema);
 

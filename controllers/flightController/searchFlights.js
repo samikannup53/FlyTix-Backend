@@ -54,12 +54,12 @@ async function searchFlights(req, res) {
     // Generate Session ID
     const sessionId = uuidv4();
 
-    const summarized = flightResultsData.data.map((flight) => 
+    const summarized = flightResultsData.data.map((flight) =>
       summarizeAmadeusFlight(flight, {
         returnDate,
-        adults: parseInt (adults),
-        children: parseInt (children),
-        infants: parseInt (infants),
+        adults: parseInt(adults),
+        children: parseInt(children),
+        infants: parseInt(infants),
       })
     );
 
@@ -73,7 +73,8 @@ async function searchFlights(req, res) {
     // Send Summarized Data with Session ID to Frontend
     res.json({
       sessionId,
-      results: summarized,
+      userId: req.user?.id || null,
+      data: summarized,
     });
   } catch (error) {
     res.status(500).json({ msg: "Server Error", error: error.message });
