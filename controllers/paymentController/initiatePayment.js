@@ -37,10 +37,10 @@ async function initiatePayment(req, res) {
 
     res.status(200).json({
       msg: "Payment Order Created Successfully",
-      bookingId: booking.bookingId,
       razorPayOrderId: paymentOrder.id,
       amount,
       currency: options.currency,
+      booking,
     });
   } catch (error) {
     res
