@@ -1,5 +1,6 @@
 const getAmadeusToken = require("../../utils/amadeusToken");
 const FlightCache = require("../../models/flight/flightCache");
+const summarizeAmadeusFlight = require("../../utils/summarizeAmadeusFlight");
 const { v4: uuidv4 } = require("uuid");
 
 async function searchFlights(req, res) {
@@ -53,17 +54,26 @@ async function searchFlights(req, res) {
     // Generate Session ID
     const sessionId = uuidv4();
 
+    const summarized = flightResultsData.data.map((flight) => 
+      summarizeAmadeusFlight(flight, {
+        returnDate,
+        adults: parseInt (adults),
+        children: parseInt (children),
+        infants: parseInt (infants),
+      })
+    );
+
     // Save full Amadeus Response to Cache
     await FlightCache.create({
       sessionId,
       userId: req.user?.id || null,
-      data: flightResultsData.data,
+      data: summarized,
     });
 
     // Send Summarized Data with Session ID to Frontend
     res.json({
       sessionId,
-      results: flightResultsData,
+      results: summarized,
     });
   } catch (error) {
     res.status(500).json({ msg: "Server Error", error: error.message });
