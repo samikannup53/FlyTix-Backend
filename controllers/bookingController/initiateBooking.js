@@ -3,38 +3,34 @@ const FlightCache = require("../../models/flight/flightCache");
 
 async function initiateBooking(req, res) {
   const {
-    userId,
     sessionId,
     flightId,
-    tripType,
-    journey,
     travellers,
     contactDetails,
     billingAddress,
-    fareDetails,
+    userId,
   } = req.body;
 
   if (
     !userId ||
     !sessionId ||
     !flightId ||
-    !tripType ||
-    !journey ||
     !travellers ||
     !contactDetails ||
-    !billingAddress ||
-    !fareDetails
+    !billingAddress
   ) {
     return res.status(400).json({ msg: "Missing Required Booking Details" });
   }
 
   try {
+    // Fetch Fligt Cache
     const flightCache = await FlightCache.findOne({ sessionId });
 
     if (!flightCache) {
       return res.status(404).json({ msg: "Session Expired or Invalid" });
     }
 
+    // Find Selected Flight
     const selectedFlight = flightCache.data.find((flight) => {
       return flight.flightId === flightId;
     });
@@ -45,11 +41,57 @@ async function initiateBooking(req, res) {
         .json({ msg: "Flight Not Found in Cahced Session" });
     }
 
+    // Build Journey
+    const buildJourney = (
+      segments,
+      travelClass,
+      airline,
+      baggage,
+      stops,
+      duration
+    ) => {
+      return segments.map((segment) => {
+        return {
+          from: {
+            city: segment.departure.city || "N/A",
+            airport: segment.departure.airport,
+            terminal: segment.departure.terminal,
+            date: segment.departure.date,
+            time: segment.departure.time,
+          },
+          to: {
+            city: segment.arrival.city || "N/A",
+            airport: segment.arrival.airport,
+            terminal: segment.arrival.terminal,
+            date: segment.arrival.date,
+            time: segment.arrival.time,
+          },
+          flightNumber: segment.flightNumber,
+          airline,
+          duration,
+          stops,
+          travelClass,
+          baggage,
+        };
+      });
+    };
+
+    const journey = buildJourney(
+      selectedFlight.outbound.segments,
+      selectedFlight.class,
+      selectedFlight.validatingAirline,
+      selectedFlight.baggage,
+      selectedFlight.outbound.stops,
+      selectedFlight.outbound.duration
+    );
+
+    const fareDetails = selectedFlight.fare;
+
     const expiresAt = new Date(Date.now() + 3 * 60 * 60 * 1000);
 
     const newBooking = await Booking.create({
       userId,
-      tripType,
+      tripType: selectedFlight.returnTrip ? "Roundtrip" : "Oneway",
       journey,
       travellers,
       contactDetails,

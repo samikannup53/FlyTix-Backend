@@ -48,7 +48,7 @@ const journeySchema = new mongoose.Schema({
   stops: { type: Number, required: true },
   travelClass: {
     type: String,
-    enum: ["Economy", "Premium Economy", "Business", "First"],
+    enum: ["ECONOMY", "PREMIUM ECONOMY", "BUSINESS", "FIRST"],
     required: true,
   },
   baggage: {
@@ -86,7 +86,7 @@ const bookingSchema = new mongoose.Schema({
   },
   fareDetails: {
     baseFare: { type: Number, required: true },
-    taxesAndFees: { type: Number, required: true },
+    taxes: { type: Number, required: true },
     instantDiscount: { type: Number, default: 0 },
     totalFare: { type: Number, required: true },
     currency: { type: String, default: "INR" },
