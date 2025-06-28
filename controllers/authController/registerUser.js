@@ -2,7 +2,8 @@ const bcrypt = require("bcrypt");
 const User = require("../../models/user/userModel");
 
 async function registerUser(req, res) {
-  const { fullName, email, dob, gender, password, termsAccepted } = req.body || {};
+  const { fullName, email, dob, gender, password, termsAccepted } =
+    req.body || {};
 
   try {
     // Input Validation
