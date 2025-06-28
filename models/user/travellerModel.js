@@ -12,7 +12,7 @@ const travellerSchema = new mongoose.Schema(
     lastName: { type: String, required: true },
     age: { type: Number, required: true },
     gender: { type: String, enum: ["Male", "Female", "Other"], required: true },
-    catagory: {
+    category: {
       type: String,
       enum: ["Adult", "Child", "Infant"],
       required: true,

@@ -29,9 +29,51 @@ async function getSavedTravellers(req, res) {
   }
 }
 
-// async function addToSavedTraveller(req, res) {
-//   res.json({ msg: "addToSavedTravellers Route is Working" });
-// }
+async function addToSavedTraveller(req, res) {
+  try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ msg: "Unauthorized Access" });
+    }
+    const userId = req.user._id;
+
+    const { title, firstName, lastName, age, gender, category } =
+      req.body || {};
+
+    if (!title || !firstName || !lastName || !age || !gender || !category) {
+      return res.status(400).json({ msg: "All Fields are Required" });
+    }
+    const existingTraveller = await Traveller.findOne({
+      userId,
+      firstName,
+      lastName,
+      age,
+      gender,
+      category,
+    });
+
+    if (existingTraveller) {
+      return res.status(409).json({ msg: "Traveller Already Exist" });
+    }
+
+    const newTraveller = await Traveller.create({
+      userId,
+      title,
+      firstName,
+      lastName,
+      age,
+      gender,
+      category,
+    });
+
+    res
+      .status(201)
+      .json({ msg: "Traveller Saved Successfully", traveller: newTraveller });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ msg: "Failed to Add Traveller", error: error.message });
+  }
+}
 
 // async function deleteSavedTraveller(req, res) {
 //   res.json({ msg: "deleteSavedTraveller Route is Working" });
