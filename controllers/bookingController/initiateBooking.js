@@ -2,24 +2,26 @@ const Booking = require("../../models/booking/booking");
 const FlightCache = require("../../models/flight/flightCache");
 
 async function initiateBooking(req, res) {
-  const {
-    sessionId,
-    flightId,
-    travellers,
-    contactDetails,
-    billingAddress,
-    userId,
-  } = req.body || {};
+  // Validate Authenticated User
+  if (!req.user || !req.user._id) {
+    return res.status(401).json({ msg: "Unauthorized Access" });
+  }
+
+  const userId = req.user._id;
+  
+  const { sessionId, flightId, travellers, contactDetails, billingAddress } =
+    req.body || {};
 
   if (
-    !userId ||
     !sessionId ||
     !flightId ||
     !travellers ||
     !contactDetails ||
     !billingAddress
   ) {
-    return res.status(400).json({ msg: "Missing Required Details to Initiate Booking" });
+    return res
+      .status(400)
+      .json({ msg: "Missing Required Details to Initiate Booking" });
   }
 
   try {
@@ -38,7 +40,7 @@ async function initiateBooking(req, res) {
     if (!selectedFlight) {
       return res
         .status(404)
-        .json({ msg: "Flight Not Found in Cahced Session" });
+        .json({ msg: "Flight Not Found in Cached Session" });
     }
 
     // Build Journey

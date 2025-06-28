@@ -1,7 +1,15 @@
 const Booking = require("../../models/booking/booking");
 
 async function cancelBooking(req, res) {
-  const { bookingId, userId, reason } = req.body || {};
+
+  // Validate Authenticated User
+  if (!req.user || !req.user._id) {
+    return res.status(401).json({ msg: "Unauthorized Access" });
+  }
+
+  const userId = req.user._id;
+
+  const { bookingId, reason } = req.body || {};
 
   if (!bookingId || !userId || !reason) {
     return res

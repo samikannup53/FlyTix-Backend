@@ -2,9 +2,16 @@ const Booking = require("../../models/booking/booking");
 const FlightCache = require("../../models/flight/flightCache");
 
 async function rescheduleBooking(req, res) {
-  const { bookingId, userId, sessionId, flightId } = req.body || {};
+  // Validate Authenticated User
+  if (!req.user || !req.user._id) {
+    return res.status(401).json({ msg: "Unauthorized Access" });
+  }
 
-  if (!bookingId || !userId || !sessionId || !flightId) {
+  const userId = req.user._id;
+
+  const { bookingId, sessionId, flightId } = req.body || {};
+
+  if (!bookingId || !sessionId || !flightId) {
     return res
       .status(400)
       .json({ msg: "Missing Required Details to Reschedule Booking" });
@@ -54,7 +61,9 @@ async function rescheduleBooking(req, res) {
     });
 
     if (!selectedFlight) {
-      return res.status(404).json({ msg: "Flight Not Found Cache Session" });
+      return res
+        .status(404)
+        .json({ msg: "Flight Not Found in Cached Session" });
     }
 
     // Build New Journey

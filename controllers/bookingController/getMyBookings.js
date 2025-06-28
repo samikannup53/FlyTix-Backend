@@ -2,7 +2,7 @@ const Booking = require("../../models/booking/booking");
 
 async function getMyBookings(req, res) {
   try {
-    // Validate Authonticated User
+    // Validate Authenticated User
     if (!req.user || !req.user._id) {
       return res.status(401).json({ msg: "Unauthorized Access" });
     }
