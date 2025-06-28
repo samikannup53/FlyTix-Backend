@@ -2,6 +2,7 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
+const cookieParser = require("cookie-parser");
 
 // Importing Routes
 const authRoutes = require("./routes/authRoutes");
@@ -12,6 +13,7 @@ const paymentRoutes = require("./routes/paymentRoutes");
 // Middlewares
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 
 // Register Routes
 app.use("/api/auth", authRoutes);

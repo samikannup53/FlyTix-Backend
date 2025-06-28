@@ -61,101 +61,108 @@ const journeySchema = new mongoose.Schema({
 });
 
 // Main Booking Schema
-const bookingSchema = new mongoose.Schema({
-  bookingId: {
-    type: String,
-    default: generateBookingId,
-    required: true,
-    unique: true,
-    index: true,
-  },
-  pnr: { type: String, unique: true, sparse: true },
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  tripType: { type: String, enum: ["Oneway", "Roundtrip"], required: true },
-  journey: [journeySchema],
-
-  isRescheduled: { type: Boolean, default: false },
-  rescheduleHistory: [
-    {
-      rescheduledAt: { type: Date, default: Date.now },
-      oldJourney: [journeySchema],
-      newJourney: [journeySchema],
-      fareDifference: { type: Number },
-      updatedFareDetails: {
-        baseFare: Number,
-        taxes: Number,
-        instantDiscount: Number,
-        totalFare: Number,
-        currency: String,
-      },
-      rescheduledBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
+const bookingSchema = new mongoose.Schema(
+  {
+    bookingId: {
+      type: String,
+      default: generateBookingId,
+      required: true,
+      unique: true,
+      index: true,
     },
-  ],
-
-  travellers: [travellerSchema],
-  contactDetails: {
-    email: { type: String, required: true },
-    mobileNumber: {
-      countryCode: { type: String },
-      number: { type: String, required: true },
-    },
-  },
-  billingAddress: {
-    pincode: { type: Number, required: true },
-    street: { type: String, required: true },
-    city: { type: String, required: true },
-    state: { type: String, required: true },
-    country: { type: String, required: true },
-  },
-  fareDetails: {
-    baseFare: { type: Number, required: true },
-    taxes: { type: Number, required: true },
-    instantDiscount: { type: Number, default: 0 },
-    totalFare: { type: Number, required: true },
-    currency: { type: String, default: "INR" },
-  },
-  bookingStatus: {
-    type: String,
-    enum: ["Pending", "Confirmed", "Cancelled", "Rescheduled"],
-    default: "Pending",
-  },
-  bookingInitiatedAt: { type: Date, default: Date.now },
-  bookingConfirmedAt: { type: Date },
-  paymentStatus: {
-    type: String,
-    enum: ["Unpaid", "Paid", "Failed"],
-    default: "Unpaid",
-  },
-  paymentDetails: {
-    gateway: { type: String },
-    orderId: { type: String, sparse: true },
-    paymentId: { type: String, sparse: true },
-    signature: { type: String, sparse: true },
-    paidAt: { type: Date, sparse: true },
-  },
-
-  cancellation: {
-    isCancelled: { type: Boolean, default: false },
-    cancelledAt: { type: Date, sparse: true },
-    cancelledBy: {
+    pnr: { type: String, unique: true, sparse: true },
+    userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      sparse: true,
+      required: true,
     },
-    reason: { type: String, sparse: true },
-    refundAmount: { type: Number, sparse: true },
-    refundStatus: {
-      type: String,
-      enum: ["Pending", "Processed", "Failed", "Not Applicable"],
-      default: "Not Applicable",
-    },
-  },
+    tripType: { type: String, enum: ["Oneway", "Roundtrip"], required: true },
+    journey: [journeySchema],
 
-  expiresAt: { type: Date },
-});
+    isRescheduled: { type: Boolean, default: false },
+    rescheduleHistory: [
+      {
+        rescheduledAt: { type: Date, default: Date.now },
+        oldJourney: [journeySchema],
+        newJourney: [journeySchema],
+        fareDifference: { type: Number },
+        updatedFareDetails: {
+          baseFare: Number,
+          taxes: Number,
+          instantDiscount: Number,
+          totalFare: Number,
+          currency: String,
+        },
+        rescheduledBy: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+      },
+    ],
+
+    travellers: [travellerSchema],
+    contactDetails: {
+      email: { type: String, required: true },
+      mobileNumber: {
+        countryCode: { type: String },
+        number: { type: String, required: true },
+      },
+    },
+    billingAddress: {
+      pincode: { type: Number, required: true },
+      street: { type: String, required: true },
+      city: { type: String, required: true },
+      state: { type: String, required: true },
+      country: { type: String, required: true },
+    },
+    fareDetails: {
+      baseFare: { type: Number, required: true },
+      taxes: { type: Number, required: true },
+      instantDiscount: { type: Number, default: 0 },
+      totalFare: { type: Number, required: true },
+      currency: { type: String, default: "INR" },
+    },
+    bookingStatus: {
+      type: String,
+      enum: ["Pending", "Confirmed", "Cancelled", "Rescheduled"],
+      default: "Pending",
+    },
+    bookingInitiatedAt: { type: Date, default: Date.now },
+    bookingConfirmedAt: { type: Date },
+    paymentStatus: {
+      type: String,
+      enum: ["Unpaid", "Paid", "Failed"],
+      default: "Unpaid",
+    },
+    paymentDetails: {
+      gateway: { type: String },
+      orderId: { type: String, sparse: true },
+      paymentId: { type: String, sparse: true },
+      signature: { type: String, sparse: true },
+      paidAt: { type: Date, sparse: true },
+    },
+
+    cancellation: {
+      isCancelled: { type: Boolean, default: false },
+      cancelledAt: { type: Date, sparse: true },
+      cancelledBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        sparse: true,
+      },
+      reason: { type: String, sparse: true },
+      refundAmount: { type: Number, sparse: true },
+      refundStatus: {
+        type: String,
+        enum: ["Pending", "Processed", "Failed", "Not Applicable"],
+        default: "Not Applicable",
+      },
+    },
+
+    expiresAt: { type: Date },
+  },
+  { timestamps: true }
+);
 
 // TTL Index
 bookingSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
