@@ -6,10 +6,12 @@ const initiateBooking = require("../controllers/bookingController/initiateBookin
 const cancelBooking = require("../controllers/bookingController/cancelBooking");
 const rescheduleBooking = require("../controllers/bookingController/rescheduleBooking");
 const getMyBookings = require("../controllers/bookingController/getMyBookings");
+const getBookingById = require("../controllers/bookingController/getBookingById");
 
 router.post("/initiate", authUser, initiateBooking);
 router.post("/cancel", authUser, cancelBooking);
 router.post("/reschedule", authUser, rescheduleBooking);
 router.get("/mybookings", authUser, getMyBookings);
+router.get("/:bookingId",  getBookingById);
 
 module.exports = router;
