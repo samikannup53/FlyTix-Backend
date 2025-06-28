@@ -20,7 +20,13 @@ async function getMyBookings(req, res) {
     }
 
     // Send Result
-    res.status(200).json({ totalBookings: bookings.length, bookings });
+    res
+      .status(200)
+      .json({
+        msg: "Bookings Fetched Successfully",
+        totalBookings: bookings.length,
+        bookings,
+      });
   } catch (error) {
     res.status(500).json({ msg: "Server Error", error: error.message });
   }
