@@ -10,6 +10,6 @@ const {
 
 router.get("/travellers", authUser, getSavedTravellers);
 router.post("/travellers", authUser, addToSavedTraveller);
-router.delete("travellers/:traverllerId", authUser, deleteSavedTraveller);
+router.delete("/travellers/:travellerId", authUser, deleteSavedTraveller);
 
 module.exports = router;
