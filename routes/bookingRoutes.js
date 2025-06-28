@@ -12,6 +12,6 @@ router.post("/initiate", authUser, initiateBooking);
 router.post("/cancel", authUser, cancelBooking);
 router.post("/reschedule", authUser, rescheduleBooking);
 router.get("/mybookings", authUser, getMyBookings);
-router.get("/:bookingId",  getBookingById);
+router.get("/:bookingId", authUser, getBookingById);
 
 module.exports = router;
