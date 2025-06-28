@@ -61,7 +61,7 @@ async function initiateBooking(req, res) {
             time: segment.departure.time,
           },
           to: {
-            cityCode: segment.departure.cityCode,
+            cityCode: segment.arrival.cityCode,
             city: segment.arrival.city || "N/A",
             airport: segment.arrival.airport,
             terminal: segment.arrival.terminal,
