@@ -9,6 +9,7 @@ const authRoutes = require("./routes/authRoutes");
 const flightRoutes = require("./routes/flightRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
+const userRoutes = require("./routes/userRoutes");
 
 // Middlewares
 app.use(cors());
@@ -20,5 +21,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/flights", flightRoutes);
 app.use("/api/booking", bookingRoutes);
 app.use("/api/payment", paymentRoutes);
+app.use("/api/user", userRoutes);
 
 module.exports = app;
