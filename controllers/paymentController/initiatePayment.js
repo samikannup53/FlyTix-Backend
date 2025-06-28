@@ -2,6 +2,13 @@ const Booking = require("../../models/booking/booking");
 const razorpay = require("../../utils/razorPayInstance");
 
 async function initiatePayment(req, res) {
+  // Validate Authenticated User
+  if (!req.user || !req.user._id) {
+    return res.status(401).json({ msg: "Unauthorized Access" });
+  }
+
+  const userId = req.user._id;
+
   const { bookingId } = req.body || {};
 
   if (!bookingId) {
@@ -9,7 +16,7 @@ async function initiatePayment(req, res) {
   }
 
   try {
-    const booking = await Booking.findOne({ bookingId });
+    const booking = await Booking.findOne({ bookingId, userId });
 
     if (!booking) {
       return res

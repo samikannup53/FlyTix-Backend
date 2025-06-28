@@ -3,6 +3,13 @@ const Booking = require("../../models/booking/booking");
 const generatePNR = require("../../utils/generatePNR");
 
 async function verifyPayment(req, res) {
+  // Validate Authenticated User
+  if (!req.user || !req.user._id) {
+    return res.status(401).json({ msg: "Unauthorized Access" });
+  }
+
+  const userId = req.user._id;
+
   const {
     razorpay_order_id,
     razorpay_payment_id,
@@ -22,7 +29,7 @@ async function verifyPayment(req, res) {
   }
 
   try {
-    const booking = await Booking.findOne({ bookingId });
+    const booking = await Booking.findOne({ bookingId, userId });
 
     if (!booking) {
       return res
