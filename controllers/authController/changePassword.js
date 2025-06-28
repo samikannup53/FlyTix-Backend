@@ -40,7 +40,7 @@ async function changePassword(req, res) {
     if (isSame) {
       return res
         .status(400)
-        .json({ msg: "New Password must be different form Current Password" });
+        .json({ msg: "New Password must be different from Current Password" });
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
