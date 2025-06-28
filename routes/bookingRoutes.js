@@ -6,7 +6,7 @@ const cancelBooking = require("../controllers/bookingController/cancelBooking");
 const resheduleBooking = require("../controllers/bookingController/resheduleBooking");
 
 router.post("/initiate", initiateBooking);
-router.get("/cancel", cancelBooking);
-router.get("/reshedule", resheduleBooking);
+router.post("/cancel", cancelBooking);
+router.post("/reshedule", resheduleBooking);
 
 module.exports = router;

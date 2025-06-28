@@ -4,7 +4,7 @@ const { nanoid } = require("nanoid");
 // Generate Booking Reference ID
 function generateBookingId() {
   const id = nanoid(8).toUpperCase();
-  return `FLY-${id}`;
+  return `FLY${id}`;
 }
 
 // Individual Traveller Details
@@ -107,11 +107,28 @@ const bookingSchema = new mongoose.Schema({
     default: "Unpaid",
   },
   paymentDetails: {
-    gateway: { type: String, sparse: true },
+    gateway: { type: String },
     orderId: { type: String, sparse: true },
     paymentId: { type: String, sparse: true },
     signature: { type: String, sparse: true },
     paidAt: { type: Date, sparse: true },
+  },
+
+  cancellation: {
+    isCancelled: { type: Boolean, default: false },
+    cancelledAt: { type: Date, sparse: true },
+    cancelledBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      sparse: true,
+    },
+    reason: { type: String, sparse: true },
+    refundAmount: { type: Number, sparse: true },
+    refundStatus: {
+      type: String,
+      enum: ["Pending", "Processed", "Failed", "Not Applicable"],
+      default: "Not Applicable",
+    },
   },
 
   expiresAt: { type: Date },

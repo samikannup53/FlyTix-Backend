@@ -2,7 +2,7 @@ const Booking = require("../../models/booking/booking");
 const razorpay = require("../../utils/razorPayInstance");
 
 async function initiatePayment(req, res) {
-  const { bookingId } = req.body;
+  const { bookingId } = req.body || {};
 
   if (!bookingId) {
     return res.status(400).json({ msg: "Booking ID Required" });

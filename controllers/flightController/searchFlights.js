@@ -13,7 +13,7 @@ async function searchFlights(req, res) {
     adults = 1,
     children = 0,
     infants = 0,
-  } = req.query;
+  } = req.query || {};
 
   if (!from || !to || !date) {
     return res

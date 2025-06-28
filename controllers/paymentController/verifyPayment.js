@@ -8,7 +8,7 @@ async function verifyPayment(req, res) {
     razorpay_payment_id,
     // razorpay_signature,
     bookingId,
-  } = req.body;
+  } = req.body || {};
 
   if (
     !razorpay_order_id ||

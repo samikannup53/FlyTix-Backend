@@ -9,7 +9,7 @@ async function initiateBooking(req, res) {
     contactDetails,
     billingAddress,
     userId,
-  } = req.body;
+  } = req.body || {};
 
   if (
     !userId ||
@@ -19,7 +19,7 @@ async function initiateBooking(req, res) {
     !contactDetails ||
     !billingAddress
   ) {
-    return res.status(400).json({ msg: "Missing Required Booking Details" });
+    return res.status(400).json({ msg: "Missing Required Details to Initiate Booking" });
   }
 
   try {
