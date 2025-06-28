@@ -1,4 +1,4 @@
-const mongoose = reuire("mongoose");
+const mongoose = require("mongoose");
 
 const travellerSchema = new mongoose.Schema(
   {

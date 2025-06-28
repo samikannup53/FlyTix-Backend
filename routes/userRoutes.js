@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const authUser = require("../middlewares/userAuthMiddlware");
 
 const {
   getSavedTravellers,
@@ -7,8 +8,8 @@ const {
   deleteSavedTraveller,
 } = require("../controllers/userController/travellers");
 
-router.get("/travellers", getSavedTravellers);
-router.post("/travellers", addToSavedTraveller);
-router.delete("traveller/:traverllerId", deleteSavedTraveller);
+router.get("/travellers", authUser, getSavedTravellers);
+router.post("/travellers", authUser, addToSavedTraveller);
+router.delete("travellers/:traverllerId", authUser, deleteSavedTraveller);
 
 module.exports = router;

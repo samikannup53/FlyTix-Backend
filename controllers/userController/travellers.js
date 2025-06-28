@@ -1,5 +1,7 @@
+// Import Traveller Model
 const Traveller = require("../../models/user/travellerModel");
 
+// Get Saved Travellers
 async function getSavedTravellers(req, res) {
   try {
     // Validate Authenticated User
@@ -29,6 +31,7 @@ async function getSavedTravellers(req, res) {
   }
 }
 
+// Add New Traveller
 async function addToSavedTraveller(req, res) {
   try {
     if (!req.user || !req.user._id) {
@@ -75,10 +78,43 @@ async function addToSavedTraveller(req, res) {
   }
 }
 
-// async function deleteSavedTraveller(req, res) {
-//   res.json({ msg: "deleteSavedTraveller Route is Working" });
-// }
+// Delete Saved Traveller
+async function deleteSavedTraveller(req, res) {
+  try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ msg: "Unauthorized Access" });
+    }
 
+    const userId = req.user._id;
+
+    const { travellerId } = req.params || {};
+
+    if (!travellerId) {
+      return res.status(400).json({ msg: "Traveller ID is Required" });
+    }
+
+    const traveller = await Traveller.findOne({ _id: travellerId, userId });
+
+    if (!traveller) {
+      return res.status(404).json({
+        msg: `Traveller Not Found for Given Traveller ID : ${travellerId}`,
+      });
+    }
+
+    await Traveller.deleteOne({ _id: travellerId });
+
+    return res.status(200).json({
+      msg: "Traveller Deleted Successfully",
+      deletedTraveller: traveller,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ msg: "Failed to Delete Traveller", error: error.message });
+  }
+}
+
+// Export Controller Functions
 module.exports = {
   getSavedTravellers,
   addToSavedTraveller,
