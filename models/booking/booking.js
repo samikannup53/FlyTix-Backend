@@ -1,10 +1,11 @@
 const mongoose = require("mongoose");
-const { nanoid } = require("nanoid");
+const { customAlphabet } = require("nanoid");
 
 // Generate Booking Reference ID
+const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+const nanoid = customAlphabet(alphabet, 8);
 function generateBookingId() {
-  const id = nanoid(8).toUpperCase();
-  return `FLY${id}`;
+  return `FLY${nanoid()}`;
 }
 
 // Individual Traveller Details
@@ -72,6 +73,28 @@ const bookingSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   tripType: { type: String, enum: ["Oneway", "Roundtrip"], required: true },
   journey: [journeySchema],
+
+  isRescheduled: { type: Boolean, default: false },
+  rescheduleHistory: [
+    {
+      rescheduledAt: { type: Date, default: Date.now },
+      oldJourney: [journeySchema],
+      newJourney: [journeySchema],
+      fareDifference: { type: Number },
+      updatedFareDetails: {
+        baseFare: Number,
+        taxes: Number,
+        instantDiscount: Number,
+        totalFare: Number,
+        currency: String,
+      },
+      rescheduledBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    },
+  ],
+
   travellers: [travellerSchema],
   contactDetails: {
     email: { type: String, required: true },
@@ -96,7 +119,7 @@ const bookingSchema = new mongoose.Schema({
   },
   bookingStatus: {
     type: String,
-    enum: ["Pending", "Confirmed", "Cancelled"],
+    enum: ["Pending", "Confirmed", "Cancelled", "Rescheduled"],
     default: "Pending",
   },
   bookingInitiatedAt: { type: Date, default: Date.now },
@@ -136,6 +159,9 @@ const bookingSchema = new mongoose.Schema({
 
 // TTL Index
 bookingSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+
+// Quey Index
+bookingSchema.index({ userId: 1, bookingStatus: 1 });
 
 const Booking = mongoose.model("Booking", bookingSchema);
 
