@@ -13,8 +13,8 @@ const {
   deleteSavedTraveller,
 } = require("../controllers/userController/travellers");
 
-router.get("/profile", getUserProfile);
-router.get("/update", updateProfile);
+router.get("/profile", authUser, getUserProfile);
+router.put("/update", authUser, updateProfile);
 
 router.get("/travellers", authUser, getSavedTravellers);
 router.post("/travellers", authUser, addToSavedTraveller);
