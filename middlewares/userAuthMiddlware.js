@@ -11,10 +11,12 @@ async function authUser(req, res, next) {
   const { valid, payload, error } = verifyToken(userAuthToken);
 
   if (!valid) {
-    console.log("JWT Verification Failed :", error.message);
     return res
       .status(401)
-      .json({ msg: "Invalid or Expired Token, Please Login Again" });
+      .json({
+        msg: "Invalid or Expired Token, Please Login Again",
+        error: error.message,
+      });
   }
   try {
     const user = await User.findById(payload.id).select("-password");

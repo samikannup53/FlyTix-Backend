@@ -1,9 +1,10 @@
 const jwt = require("jsonwebtoken");
-
+const bcrypt = require("bcrypt");
 const User = require("../../models/user/userModel");
 const PasswordResetSession = require("../../models/auth/passwordResetSession");
 const generateOTP = require("../../utils/otpGenerator");
 const sendEmail = require("../../utils/mailer");
+const verifyToken = require("../../utils/verifyToken");
 
 async function initiateForgotPassword(req, res) {
   try {
@@ -20,11 +21,10 @@ async function initiateForgotPassword(req, res) {
     }
 
     const otp = generateOTP();
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
     await PasswordResetSession.deleteMany({ email });
 
-    await PasswordResetSession.create({ email, otp, expiresAt });
+    await PasswordResetSession.create({ email, otp });
 
     const sendEmailResponse = await sendEmail({
       to: email,
@@ -38,7 +38,7 @@ async function initiateForgotPassword(req, res) {
         .json({ msg: "Failed to send OTP", error: sendEmailResponse.error });
     }
 
-    const resetSessionToken = jwt.sign({ email }, process.env.JWT_SECRET, {
+    const resetSessionToken = jwt.sign({ email }, process.env.JWT_SECRET_KEY, {
       expiresIn: "10m",
       issuer: "FlyTix",
     });
@@ -59,4 +59,71 @@ async function initiateForgotPassword(req, res) {
   }
 }
 
-module.exports = { initiateForgotPassword };
+async function validateAndResetPassword(req, res) {
+  try {
+    const { otp, newPassword } = req.body || {};
+
+    if (!otp || !newPassword) {
+      return res.status(400).json({ msg: "All Fields are Required" });
+    }
+
+    if (newPassword.length < 8) {
+      return res
+        .status(400)
+        .json({ msg: "New Password Must be Minimum 8 Characters" });
+    }
+    const resetSessionToken = req.cookies.resetSessionToken;
+
+    if (!resetSessionToken) {
+      return res.status(401).json({ msg: "Session Expired or Invalid" });
+    }
+
+    const { valid, payload, error } = verifyToken(resetSessionToken);
+
+    if (!valid) {
+      return res.status(401).json({
+        msg: "Invalid or Expired Token, Please Login Again",
+        error: error.message,
+      });
+    }
+
+    const email = payload.email;
+
+    const passwordResetSession = await PasswordResetSession.findOne({ email });
+
+    if (!passwordResetSession) {
+      return res.status(400).json({ msg: "Session Expired or Invalid" });
+    }
+
+    if (passwordResetSession.otp !== otp) {
+      return res.status(400).json({ msg: "OTP Mismatch" });
+    }
+
+
+    const user = await User.findOne({ email });
+    const isSame = await bcrypt.compare(newPassword, user.password);
+
+    if (isSame) {
+      return res
+        .status(400)
+        .json({ msg: "New Password must be different from Old Password" });
+    }
+
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+    await User.updateOne({ email }, { password: hashedNewPassword });
+
+    await PasswordResetSession.deleteMany({ email });
+
+    res
+      .clearCookie("resetSessionToken")
+      .status(200)
+      .json({ msg: "Password Reset Successfully" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ msg: "Internal Server Error", error: error.message });
+  }
+}
+
+module.exports = { initiateForgotPassword, validateAndResetPassword };
