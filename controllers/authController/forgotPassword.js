@@ -6,6 +6,7 @@ const generateOTP = require("../../utils/otpGenerator");
 const sendEmail = require("../../utils/mailer");
 const verifyToken = require("../../utils/verifyToken");
 
+// Initiate Forgot Password with JWT
 async function initiateForgotPassword(req, res) {
   try {
     const { email } = req.body || {};
@@ -59,6 +60,7 @@ async function initiateForgotPassword(req, res) {
   }
 }
 
+// Validate OTP, JWT and Updaet Password
 async function validateAndResetPassword(req, res) {
   try {
     const { otp, newPassword } = req.body || {};
@@ -99,8 +101,11 @@ async function validateAndResetPassword(req, res) {
       return res.status(400).json({ msg: "OTP Mismatch" });
     }
 
-
     const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ msg: "User not found." });
+    }
+
     const isSame = await bcrypt.compare(newPassword, user.password);
 
     if (isSame) {
@@ -126,4 +131,60 @@ async function validateAndResetPassword(req, res) {
   }
 }
 
-module.exports = { initiateForgotPassword, validateAndResetPassword };
+// Resend OTP Functionality
+async function resendOtpForForgotPassword(req, res) {
+  try {
+    const resetSessionToken = req.cookies.resetSessionToken;
+
+    if (!resetSessionToken) {
+      return res.status(401).json({ msg: "Session Expired or Invalid" });
+    }
+
+    const { valid, payload, error } = verifyToken(resetSessionToken);
+
+    if (!valid) {
+      return res
+        .status(401)
+        .json({ msg: "Invalid or Expired Token", error: error.message });
+    }
+
+    const email = payload.email;
+
+    const recentOtp = await PasswordResetSession.findOne({ email });
+
+    if (recentOtp && Date.now() - recentOtp.createdAt.getTime() < 60 * 1000) {
+      return res
+        .status(429)
+        .json({ msg: "Please wait 60 Seconds Before Requesting New OTP" });
+    }
+
+    await PasswordResetSession.deleteMany({ email });
+
+    const otp = generateOTP();
+
+    await PasswordResetSession.create({ email, otp });
+
+    const sendEmailResponse = await sendEmail({
+      to: email,
+      subject: "OTP Regenerated",
+      text: `Your OTP for FlyTix Account Password Reset is ${otp}. It will expire in 10 Minutes. For Security Reasons Dont Share it with Anyone.`,
+    });
+
+    if (sendEmailResponse.status !== 200) {
+      return res
+        .status(500)
+        .json({ msg: "Failed to Resend OTP", error: sendEmailResponse.error });
+    }
+    res.status(200).json({ msg: "OTP Re-Sent Successfully" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ msg: "Internal Server Error", error: error.message });
+  }
+}
+
+module.exports = {
+  initiateForgotPassword,
+  validateAndResetPassword,
+  resendOtpForForgotPassword,
+};
