@@ -1,3 +1,5 @@
+const jwt = require("jsonwebtoken");
+
 const User = require("../../models/user/userModel");
 const PasswordResetSession = require("../../models/auth/passwordResetSession");
 const generateOTP = require("../../utils/otpGenerator");
@@ -36,9 +38,22 @@ async function initiateForgotPassword(req, res) {
         .json({ msg: "Failed to send OTP", error: sendEmailResponse.error });
     }
 
-    return res.status(200).json({ msg: "OTP Sent Successfully to Your Email" });
+    const resetSessionToken = jwt.sign({ email }, process.env.JWT_SECRET, {
+      expiresIn: "10m",
+      issuer: "FlyTix",
+    });
+
+    res
+      .cookie("resetSessionToken", resetSessionToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Strict",
+        maxAge: 10 * 60 * 1000,
+      })
+      .status(200)
+      .json({ msg: "OTP Sent Successfully to Your Email" });
   } catch (error) {
-    return res
+    res
       .status(500)
       .json({ msg: "Internal Server Error", error: error.message });
   }
