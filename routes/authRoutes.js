@@ -10,11 +10,13 @@ const loginUser = require("../controllers/authController/loginUser");
 const logoutUser = require("../controllers/authController/logoutUser");
 const changePassword = require("../controllers/authController/changePassword");
 const { initiateForgotPassword, resendOtpForForgotPassword, validateAndResetPassword } = require("../controllers/authController/forgotPassword");
+const getLoggedInUser = require("../controllers/authController/authMe");
 
 // Routes
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.post("/logout", logoutUser);
+router.get('/me', authUser, getLoggedInUser);
 router.put("/change-password", authUser, changePassword);
 router.post('/forgot-password/initiate', initiateForgotPassword);
 router.post('/forgot-password/resend-otp', resendOtpForForgotPassword);
