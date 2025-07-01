@@ -15,7 +15,6 @@ const {
 
 router.get("/profile", authUser, getUserProfile);
 router.put("/update", authUser, updateProfile);
-
 router.get("/travellers", authUser, getSavedTravellers);
 router.post("/travellers", authUser, addToSavedTraveller);
 router.delete("/travellers/:travellerId", authUser, deleteSavedTraveller);
