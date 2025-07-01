@@ -8,7 +8,7 @@ async function loginUser(req, res) {
   try {
     // Input Validation
     if (!email) {
-      return res.status(400).json({ msg: "Email is Require" });
+      return res.status(400).json({ msg: "Email is Required" });
     }
     if (!password) {
       return res.status(400).json({ msg: "Password is Required" });
@@ -34,7 +34,7 @@ async function loginUser(req, res) {
       .cookie("userAuthToken", userAuthToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "None",
+        sameSite: "Lax",
         maxAge: 24 * 60 * 60 * 1000,
       })
       .status(200)
