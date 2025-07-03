@@ -31,6 +31,6 @@ app.use("/api/flights", flightRoutes);
 app.use("/api/booking", bookingRoutes);
 app.use("/api/payment", paymentRoutes);
 app.use("/api/user", userRoutes);
-app.use("api/airports", airportRoutes);
+app.use("/api/airports", airportRoutes);
 
 module.exports = app;

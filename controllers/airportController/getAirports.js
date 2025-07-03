@@ -10,8 +10,8 @@ async function getAirports(req, res) {
     .filter((airport) => {
       return (
         airport.iataCode.toLowerCase().includes(search) ||
-        airport.city.toLowerCase.includes(search) ||
-        airport.name.toLowerCase.includes(search)
+        airport.city.toLowerCase().includes(search) ||
+        airport.name.toLowerCase().includes(search)
       );
     });
   res.json(results);
