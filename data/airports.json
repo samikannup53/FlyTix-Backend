@@ -38827,7 +38827,7 @@
   },
   "AKD": {
     "name": "Akola Airport",
-    "city": "N/A",
+    "city": "Akola",
     "state": "Maharashtra",
     "country": "IN"
   },
@@ -38845,7 +38845,7 @@
   },
   "PAB": {
     "name": "Bilaspur Airport",
-    "city": "N/A",
+    "city": "Bilaspur",
     "state": "Chhattisgarh",
     "country": "IN"
   },
@@ -38881,13 +38881,13 @@
   },
   "NMB": {
     "name": "Daman Airport",
-    "city": "N/A",
+    "city": "Daman",
     "state": "Dadra-and-Nagar-Haveli-and-Daman-and-Diu",
     "country": "IN"
   },
   "GUX": {
     "name": "Guna Airport",
-    "city": "N/A",
+    "city": "Guna",
     "state": "Madhya-Pradesh",
     "country": "IN"
   },
@@ -38935,13 +38935,13 @@
   },
   "KLH": {
     "name": "Kolhapur Airport",
-    "city": "N/A",
+    "city": "Kolhapur",
     "state": "Maharashtra",
     "country": "IN"
   },
   "IXK": {
     "name": "Keshod Airport",
-    "city": "N/A",
+    "city": "Keshod",
     "state": "Gujarat",
     "country": "IN"
   },
@@ -40063,7 +40063,7 @@
   },
   "VGA": {
     "name": "Vijayawada Airport",
-    "city": "N/A",
+    "city": "Vijayawada",
     "state": "Andhra-Pradesh",
     "country": "IN"
   },
@@ -40087,7 +40087,7 @@
   },
   "CDP": {
     "name": "Cuddapah Airport",
-    "city": "N/A",
+    "city": "Cuddapah",
     "state": "Andhra-Pradesh",
     "country": "IN"
   },

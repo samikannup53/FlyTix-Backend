@@ -10,6 +10,7 @@ const flightRoutes = require("./routes/flightRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const userRoutes = require("./routes/userRoutes");
+const airportRoutes = require("./routes/airPortRoute");
 
 // Cors
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
@@ -30,5 +31,6 @@ app.use("/api/flights", flightRoutes);
 app.use("/api/booking", bookingRoutes);
 app.use("/api/payment", paymentRoutes);
 app.use("/api/user", userRoutes);
+app.use("api/airports", airportRoutes);
 
 module.exports = app;
