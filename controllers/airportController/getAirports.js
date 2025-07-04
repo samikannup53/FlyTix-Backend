@@ -1,20 +1,29 @@
 const airportData = require("../../data/airports.json");
 
-async function getAirports(req, res) {
+function getAirports(req, res) {
   const search = req.query.search?.toLowerCase() || "";
 
-  const results = Object.entries(airportData)
-    .map(([iataCode, airportDetails]) => {
-      return { iataCode, city: airportDetails.city, name: airportDetails.name };
+  const allAirports = Object.entries(airportData).map(
+    ([iataCode, airportDetails]) => ({
+      iataCode,
+      city: airportDetails.city,
+      name: airportDetails.name,
+      country: airportDetails.country,
+      state: airportDetails.state,
     })
-    .filter((airport) => {
-      return (
-        airport.iataCode.toLowerCase().includes(search) ||
-        airport.city.toLowerCase().includes(search) ||
-        airport.name.toLowerCase().includes(search)
-      );
-    });
-  res.json(results);
+  );
+
+  const filtered = allAirports.filter((airport) =>
+    airport.iataCode.toLowerCase().includes(search) ||
+    airport.city.toLowerCase().includes(search) ||
+    airport.name.toLowerCase().includes(search) ||
+    airport.state.toLowerCase().includes(search)
+  );
+
+  const sorted = filtered.sort((a, b) => a.city.localeCompare(b.city));
+  const limited = sorted.slice(0, 10);
+
+  res.json(limited);
 }
 
 module.exports = getAirports;
