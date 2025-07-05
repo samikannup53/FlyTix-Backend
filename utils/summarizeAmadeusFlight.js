@@ -1,4 +1,5 @@
 const airportData = require("../data/airports.json");
+const airlineData = require("../data/airlines.json");
 
 function getAirportDetails(iataCode) {
   const airport = airportData[iataCode];
@@ -10,12 +11,29 @@ function getAirportDetails(iataCode) {
   };
 }
 
+function getAirlineName(code) {
+  const airline = airlineData.find((a) => a.code === code);
+  return airline ? airline.name : "Unknown Airline";
+}
+
+function formatDuration(isoDuration) {
+  const match = isoDuration.match(/PT(?:(\d+)H)?(?:(\d+)M)?/);
+  const hours = match?.[1] ? parseInt(match[1], 10) : 0;
+  const minutes = match?.[2] ? parseInt(match[2], 10) : 0;
+
+  let result = "";
+  if (hours > 0) result += `${hours}H `;
+  if (minutes > 0) result += `${minutes}M`;
+  return result.trim() || "0M";
+}
+
 function formatSegment(segment) {
   const departureDetails = getAirportDetails(segment.departure.iataCode);
   const arrivalDetails = getAirportDetails(segment.arrival.iataCode);
 
   return {
     airlineCode: segment.carrierCode,
+    airlineName: getAirlineName(segment.carrierCode),
     flightNumber: `${segment.carrierCode}-${segment.number}`,
 
     departure: {
@@ -53,24 +71,26 @@ function summarizeAmadeusFlight(flight, meta = {}) {
   const totalFare = parseFloat(flight.price.total);
   const taxes = (totalFare - baseFare).toFixed(2);
 
+  const validatingAirlineCode = flight.validatingAirlineCodes?.[0] || "N/A";
+
   return {
     flightId: flight.id,
-    validatingAirline: flight.validatingAirlineCodes?.[0] || "N/A",
+    validatingAirline: validatingAirlineCode,
 
     outbound: {
       segments: outbound.segments.map((segment) => {
         return formatSegment(segment);
       }),
-      duration: outbound.duration,
+      duration: formatDuration(outbound.duration),
       stops: outbound.segments.length - 1,
     },
 
     returnTrip: returnTrip
       ? {
-          segments: outbound.segments.map((segment) => {
+          segments: returnTrip.segments.map((segment) => {
             return formatSegment(segment);
           }),
-          duration: returnTrip.duration,
+          duration: formatDuration(returnTrip.duration),
           stops: returnTrip.segments.length - 1,
         }
       : null,

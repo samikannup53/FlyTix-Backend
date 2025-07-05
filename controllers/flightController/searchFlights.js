@@ -32,7 +32,7 @@ async function searchFlights(req, res) {
       adults: parseInt(adults),
       children: parseInt(children),
       infants: parseInt(infants),
-      max: 10,
+      max: "50",
     });
 
     if (returnDate) {
@@ -48,7 +48,9 @@ async function searchFlights(req, res) {
     const flightResultsData = await flightResults.json();
 
     if (flightResultsData.errors) {
-      return res.status(500).json({ error: flightResultsData.errors });
+      return res
+        .status(500)
+        .json({ msg: "Amadeus API error", details: flightResultsData.errors });
     }
 
     // Generate Session ID
@@ -70,9 +72,16 @@ async function searchFlights(req, res) {
       data: summarized,
     });
 
+    // Send Session ID in Cookie
+    res.cookie("sessionId", sessionId, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Lax",
+      // maxAge: 1000 * 60 * 30,
+    });
+
     // Send Summarized Data with Session ID to Frontend
     res.json({
-      sessionId,
       userId: req.user?.id || null,
       data: summarized,
     });

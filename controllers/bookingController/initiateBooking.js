@@ -8,8 +8,10 @@ async function initiateBooking(req, res) {
   }
 
   const userId = req.user._id;
-  
-  const { sessionId, flightId, travellers, contactDetails, billingAddress } =
+
+  const sessionId = req.cookies.sessionId;
+
+  const { flightId, travellers, contactDetails, billingAddress } =
     req.body || {};
 
   if (
