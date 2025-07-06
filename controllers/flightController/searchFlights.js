@@ -32,7 +32,7 @@ async function searchFlights(req, res) {
       adults: parseInt(adults),
       children: parseInt(children),
       infants: parseInt(infants),
-      max: "50",
+      max: "100",
     });
 
     if (returnDate) {
