@@ -10,6 +10,9 @@ async function initiateBooking(req, res) {
   const userId = req.user._id;
 
   const sessionId = req.cookies.sessionId;
+  if (!sessionId) {
+    return res.status(400).json({ msg: "Session ID missing in cookies" });
+  }
 
   const { flightId, travellers, contactDetails, billingAddress } =
     req.body || {};

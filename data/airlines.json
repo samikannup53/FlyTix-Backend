@@ -83,5 +83,6 @@
   { "code": "OK", "name": "Czech Airlines" },
   { "code": "HV", "name": "Transavia" },
   { "code": "BT", "name": "Air Baltic" },
-  { "code": "LG", "name": "Luxair" }
+  { "code": "LG", "name": "Luxair" },
+  { "code": "UL", "name": "SriLankan Airlines" }
 ]
