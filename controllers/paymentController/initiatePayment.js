@@ -32,7 +32,7 @@ async function initiatePayment(req, res) {
 
     const options = {
       amount,
-      currency: booking.fareDetails.currency || "INR",
+      currency: "INR",
       receipt: booking.bookingId,
       notes: {
         bookingId: booking.bookingId,

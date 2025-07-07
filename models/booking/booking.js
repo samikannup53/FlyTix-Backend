@@ -29,26 +29,68 @@ const travellerSchema = new mongoose.Schema({
 
 // Journey Details
 const journeySchema = new mongoose.Schema({
-  from: {
-    cityCode: { type: String, required: true },
-    city: { type: String, required: true },
-    airport: { type: String, required: true },
-    terminal: { type: String, required: true },
-    date: { type: String, required: true },
-    time: { type: String, required: true },
+  outbound: {
+    segments: [
+      {
+        airlineCode: { type: String, required: true },
+        airlineName: { type: String, required: true },
+        flightNumber: { type: String, required: true },
+        from: {
+          date: { type: String, required: true },
+          time: { type: String, required: true },
+          cityCode: { type: String, required: true },
+          city: { type: String, required: true },
+          state: { type: String, required: true },
+          country: { type: String, required: true },
+          airport: { type: String, required: true },
+          terminal: { type: String, required: true },
+        },
+        to: {
+          date: { type: String, required: true },
+          time: { type: String, required: true },
+          cityCode: { type: String, required: true },
+          city: { type: String, required: true },
+          state: { type: String, required: true },
+          country: { type: String, required: true },
+          airport: { type: String, required: true },
+          terminal: { type: String, required: true },
+        },
+      },
+    ],
+    duration: { type: String, required: true },
+    stops: { type: Number, required: true },
   },
-  to: {
-    cityCode: { type: String, required: true },
-    city: { type: String, required: true },
-    airport: { type: String, required: true },
-    terminal: { type: String, required: true },
-    date: { type: String, required: true },
-    time: { type: String, required: true },
+  returnTrip: {
+    segments: [
+      {
+        airlineCode: { type: String, required: true },
+        airlineName: { type: String, required: true },
+        flightNumber: { type: String, required: true },
+        from: {
+          date: { type: String, required: true },
+          time: { type: String, required: true },
+          cityCode: { type: String, required: true },
+          city: { type: String, required: true },
+          state: { type: String, required: true },
+          country: { type: String, required: true },
+          airport: { type: String, required: true },
+          terminal: { type: String, required: true },
+        },
+        to: {
+          date: { type: String, required: true },
+          time: { type: String, required: true },
+          cityCode: { type: String, required: true },
+          city: { type: String, required: true },
+          state: { type: String, required: true },
+          country: { type: String, required: true },
+          airport: { type: String, required: true },
+          terminal: { type: String, required: true },
+        },
+      },
+    ],
+    duration: { type: String },
+    stops: { type: Number },
   },
-  flightNumber: { type: String, required: true },
-  airline: { type: String, required: true },
-  duration: { type: String, required: true },
-  stops: { type: Number, required: true },
   travelClass: {
     type: String,
     enum: ["ECONOMY", "PREMIUM ECONOMY", "BUSINESS", "FIRST"],

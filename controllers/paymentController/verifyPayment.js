@@ -13,14 +13,14 @@ async function verifyPayment(req, res) {
   const {
     razorpay_order_id,
     razorpay_payment_id,
-    // razorpay_signature,
+    razorpay_signature,
     bookingId,
   } = req.body || {};
 
   if (
     !razorpay_order_id ||
     !razorpay_payment_id ||
-    // !razorpay_signature ||
+    !razorpay_signature ||
     !bookingId
   ) {
     return res
@@ -41,24 +41,24 @@ async function verifyPayment(req, res) {
       return res.status(200).json({ msg: "Payment Already Verified" });
     }
 
-    // const signatureBody = `${razorpay_order_id}|${razorpay_payment_id}`;
+    const signatureBody = `${razorpay_order_id}|${razorpay_payment_id}`;
 
-    // if (!process.env.RAZORPAY_SECRET_KEY) {
-    //   return res
-    //     .status(500)
-    //     .json({ msg: "Server misconfigured: Missing Razorpay Secret Key" });
-    // }
+    if (!process.env.RAZORPAY_KEY_SECRET) {
+      return res
+        .status(500)
+        .json({ msg: "Server misconfigured: Missing Razorpay Secret Key" });
+    }
 
-    // const expectedSignature = crypto
-    //   .createHmac("sha256", process.env.RAZORPAY_SECRET_KEY)
-    //   .update(signatureBody.toString())
-    //   .digest("hex");
+    const expectedSignature = crypto
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+      .update(signatureBody.toString())
+      .digest("hex");
 
-    // if (expectedSignature !== razorpay_signature) {
-    //   return res
-    //     .status(400)
-    //     .json({ msg: "Invalid Signature, Payment Verification Failed" });
-    // }
+    if (expectedSignature !== razorpay_signature) {
+      return res
+        .status(400)
+        .json({ msg: "Invalid Signature, Payment Verification Failed" });
+    }
 
     if (
       booking.paymentStatus === "Unpaid" ||
@@ -75,7 +75,7 @@ async function verifyPayment(req, res) {
         gateway: "Razorpay",
         orderId: razorpay_order_id,
         paymentId: razorpay_payment_id,
-        // signature: razorpay_signature,
+        signature: razorpay_signature,
         paidAt: new Date(),
       };
 
@@ -104,6 +104,7 @@ async function verifyPayment(req, res) {
       paymentDetails: booking.paymentDetails,
     });
   } catch (error) {
+    console.error("Payment Verification Error:", error);
     res
       .status(500)
       .json({ msg: "Payment verification failed", error: error.message });
