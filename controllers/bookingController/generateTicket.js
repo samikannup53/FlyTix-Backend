@@ -82,8 +82,16 @@ const generateTicket = async (req, res) => {
     };
 
     const pdfPath = path.join(__dirname, `../../tickets/${booking.pnr}.pdf`);
+
     await generatePDF(ticketData, pdfPath);
-    res.download(pdfPath, `Flytix-Ticket-${booking.pnr}.pdf`);
+
+    const fileStream = fs.createReadStream(pdfPath);
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `inline; filename="Flytix-Ticket-${booking.pnr}.pdf"`
+    );
+    fileStream.pipe(res);
   } catch (error) {
     console.error("Error generating ticket:", error);
     res
