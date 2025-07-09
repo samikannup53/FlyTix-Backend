@@ -1,14 +1,11 @@
 const Booking = require("../../models/booking/booking");
 
 async function cancelBooking(req, res) {
-
-  // Validate Authenticated User
   if (!req.user || !req.user._id) {
     return res.status(401).json({ msg: "Unauthorized Access" });
   }
 
   const userId = req.user._id;
-
   const { bookingId, reason } = req.body || {};
 
   if (!bookingId || !userId || !reason) {
@@ -42,12 +39,14 @@ async function cancelBooking(req, res) {
         .json({ msg: "Cancellation Not Allowed for Pending Bookings" });
     }
 
-    if (!booking.journey || !booking.journey[0] || !booking.journey[0].from) {
+    const firstSegment = booking.journey?.[0].outbound?.segments?.[0];
+
+    if (!firstSegment || !firstSegment.from?.date || !firstSegment.from?.time) {
       return res.status(400).json({ msg: "Invalid Journey Data" });
     }
 
     const departureTime = new Date(
-      `${booking.journey[0].from.date}T${booking.journey[0].from.time}`
+      `${firstSegment.from.date}T${firstSegment.from.time}`
     );
 
     const hoursLeft = (departureTime - new Date()) / (1000 * 60 * 60);
@@ -58,10 +57,11 @@ async function cancelBooking(req, res) {
       });
     }
 
+    const totalFare = booking.fareDetails?.totalFare || 0;
     const refund =
       hoursLeft >= 24
-        ? Math.round(booking.fareDetails.totalFare * 0.8 * 100) / 100
-        : Math.round(booking.fareDetails.totalFare * 0.5 * 100) / 100;
+        ? Math.round(totalFare * 0.8 * 100) / 100
+        : Math.round(totalFare * 0.5 * 100) / 100;
 
     booking.bookingStatus = "Cancelled";
 
