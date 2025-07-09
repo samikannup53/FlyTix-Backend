@@ -76,6 +76,23 @@ async function verifyPayment(req, res) {
       booking.expiresAt = undefined;
       await booking.save();
 
+      // Send Payment Confirmation Email
+      await sendEmail({
+        to: booking.contactDetails.email,
+        subject: "Flytix Payment Confirmation",
+        html: `
+              <p>Dear ${booking.travellers?.[0]?.firstName || "Traveller"},</p>
+              <p>Your payment of <strong>${booking.fareDetails.currency} ${
+          booking.fareDetails.totalFare
+        }</strong> has been received successfully.</p>
+              <p>Booking ID: <strong>${booking.bookingId}</strong><br/>
+              PNR: <strong>${booking.pnr}</strong><br/>
+             Payment ID: <strong>${razorpay_payment_id}</strong></p>
+              <p>We will now issue your e-ticket shortly.</p>
+              <p>Thank you for choosing Flytix!</p>
+          `,
+      });
+
       // Generate PDF Ticket
       const pdfPath = await generateTicketPDF(booking);
 
