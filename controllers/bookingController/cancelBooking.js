@@ -1,4 +1,5 @@
 const Booking = require("../../models/booking/booking");
+const sendEmail = require("../../utils/mailer"); // import your mailer
 
 async function cancelBooking(req, res) {
   if (!req.user || !req.user._id) {
@@ -64,7 +65,6 @@ async function cancelBooking(req, res) {
         : Math.round(totalFare * 0.5 * 100) / 100;
 
     booking.bookingStatus = "Cancelled";
-
     booking.cancellation = {
       isCancelled: true,
       cancelledAt: new Date(),
@@ -76,6 +76,30 @@ async function cancelBooking(req, res) {
 
     await booking.save();
 
+    // ✅ Send Cancellation Email
+    const emailResult = await sendEmail({
+      to: booking.contactDetails.email,
+      subject: `Flytix Booking Cancelled — ${booking.pnr}`,
+      html: `
+        <div style="font-family: sans-serif; color: #333;">
+          <h2 style="color: #e53935;">Your Booking Has Been Cancelled</h2>
+          <p>Hello,</p>
+          <p>Your booking with the following details has been successfully cancelled:</p>
+          <ul>
+            <li><strong>Booking ID:</strong> ${booking.bookingId}</li>
+            <li><strong>PNR:</strong> ${booking.pnr}</li>
+            <li><strong>Refund Amount:</strong> ₹${refund}</li>
+            <li><strong>Reason:</strong> ${reason}</li>
+            <li><strong>Cancelled On:</strong> ${new Date().toLocaleString()}</li>
+          </ul>
+          <p style="margin-top: 12px;">The refund will be processed shortly to your original payment method.</p>
+          <p>Thank you for choosing Flytix.</p>
+        </div>
+      `,
+    });
+
+    console.log("Cancellation email sent:", emailResult.status);
+
     return res.status(200).json({
       msg: "Booking Cancelled Successfully",
       bookingId: booking.bookingId,
@@ -84,6 +108,7 @@ async function cancelBooking(req, res) {
       cancellationDetails: booking.cancellation,
     });
   } catch (error) {
+    console.error("Cancellation Error:", error);
     res
       .status(500)
       .json({ msg: "Error cancelling booking", error: error.message });
