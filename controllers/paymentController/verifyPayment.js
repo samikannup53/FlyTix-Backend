@@ -1,15 +1,15 @@
 const crypto = require("crypto");
 const Booking = require("../../models/booking/booking");
 const generatePNR = require("../../utils/generatePNR");
+const generateTicketPDF = require("../../utils/ticketGenerator");
+const sendEmail = require("../../utils/mailer");
 
 async function verifyPayment(req, res) {
-  // Validate Authenticated User
   if (!req.user || !req.user._id) {
     return res.status(401).json({ msg: "Unauthorized Access" });
   }
 
   const userId = req.user._id;
-
   const {
     razorpay_order_id,
     razorpay_payment_id,
@@ -42,16 +42,9 @@ async function verifyPayment(req, res) {
     }
 
     const signatureBody = `${razorpay_order_id}|${razorpay_payment_id}`;
-
-    if (!process.env.RAZORPAY_KEY_SECRET) {
-      return res
-        .status(500)
-        .json({ msg: "Server misconfigured: Missing Razorpay Secret Key" });
-    }
-
     const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-      .update(signatureBody.toString())
+      .update(signatureBody)
       .digest("hex");
 
     if (expectedSignature !== razorpay_signature) {
@@ -60,6 +53,7 @@ async function verifyPayment(req, res) {
         .json({ msg: "Invalid Signature, Payment Verification Failed" });
     }
 
+    // Update booking only if not already paid
     if (
       booking.paymentStatus === "Unpaid" ||
       booking.paymentStatus === "Failed"
@@ -81,6 +75,28 @@ async function verifyPayment(req, res) {
 
       booking.expiresAt = undefined;
       await booking.save();
+
+      // Generate PDF Ticket
+      const pdfPath = await generateTicketPDF(booking);
+
+      // Send Confirmation Email with Ticket Attachment
+      await sendEmail({
+        to: booking.contactDetails.email,
+        subject: `Flytix Booking Confirmed - PNR ${pnr}`,
+        text: `Dear ${booking.travellers[0].firstName},\n\nYour booking has been successfully confirmed.\nPNR: ${pnr}\n\nPlease find your e-ticket attached.\n\nThank you for choosing Flytix.`,
+        html: `<p>Dear <strong>${booking.travellers[0].firstName}</strong>,</p>
+               <p>Your booking has been <strong>confirmed</strong> successfully.</p>
+               <p><strong>PNR:</strong> ${pnr}</p>
+               <p>Please find your e-ticket attached.</p>
+               <p>Thank you for choosing <strong>Flytix</strong>!</p>`,
+        // Attach the ticket
+        attachments: [
+          {
+            filename: `Flytix-Ticket-${pnr}.pdf`,
+            path: pdfPath,
+          },
+        ],
+      });
     } else {
       return res.status(400).json({
         msg: "Payment already Verified or Cannot be updated due to Status Mismatch",
