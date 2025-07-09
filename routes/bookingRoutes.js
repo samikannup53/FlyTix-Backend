@@ -14,6 +14,6 @@ router.post("/cancel", authUser, cancelBooking);
 router.post("/reschedule", authUser, rescheduleBooking);
 router.get("/mybookings", authUser, getMyBookings);
 router.get("/:bookingId", authUser, getBookingById);
-router.get("/:bookingId/ticket", generateTicket);
+router.get("/:bookingId/ticket", authUser, generateTicket);
 
 module.exports = router;

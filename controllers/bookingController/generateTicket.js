@@ -4,19 +4,34 @@ const generatePDF = require("../../utils/pdfGenerator");
 const Booking = require("../../models/booking/booking");
 
 const generateTicket = async (req, res) => {
-  const { bookingId } = req.params;
-
   try {
-    const booking = await Booking.findOne({ bookingId });
-    if (!booking) return res.status(404).json({ msg: "Booking not found" });
+    // Step 1: Authentication Check
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ msg: "Unauthorized Access" });
+    }
 
+    const userId = req.user._id;
+    const { bookingId } = req.params;
+
+    if (!bookingId) {
+      return res.status(400).json({ msg: "Invalid Booking ID" });
+    }
+
+    // Step 2: Fetch only user’s booking
+    const booking = await Booking.findOne({ bookingId, userId });
+    if (!booking) {
+      return res
+        .status(404)
+        .json({ msg: "Booking not found or access denied" });
+    }
+
+    // Step 3: Prepare ticket data
     const trip = booking.journey[0];
     const outboundSegments = trip.outbound.segments;
     const returnSegments = trip.returnTrip?.segments || null;
 
     const getFlightInfo = (segments, tripData) => {
-      if (!segments || segments.length === 0) return null;
-
+      if (!segments?.length) return null;
       const first = segments[0];
       const last = segments[segments.length - 1];
 
@@ -71,10 +86,9 @@ const generateTicket = async (req, res) => {
     res.download(pdfPath, `Flytix-Ticket-${booking.pnr}.pdf`);
   } catch (error) {
     console.error("Error generating ticket:", error);
-    res.status(500).json({
-      msg: "Error generating ticket",
-      error: error.message,
-    });
+    res
+      .status(500)
+      .json({ msg: "Error generating ticket", error: error.message });
   }
 };
 
