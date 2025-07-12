@@ -48,6 +48,7 @@ async function searchFlights(req, res) {
     const flightResultsData = await flightResults.json();
 
     if (flightResultsData.errors) {
+      console.error(flightResultsData.errors);
       return res
         .status(500)
         .json({ msg: "Amadeus API error", details: flightResultsData.errors });
@@ -87,6 +88,7 @@ async function searchFlights(req, res) {
     });
   } catch (error) {
     res.status(500).json({ msg: "Server Error", error: error.message });
+    console.error(error);
   }
 }
 
