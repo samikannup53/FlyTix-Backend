@@ -32,7 +32,7 @@ async function loginUser(req, res) {
     // Send Token via Cookie
     res
       .cookie("userAuthToken", userAuthToken, {
-        httpOnly: true,
+        httpOnly: false,
         secure: process.env.NODE_ENV === "production",
         sameSite: "None",
         maxAge: 24 * 60 * 60 * 1000,
