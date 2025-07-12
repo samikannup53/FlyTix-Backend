@@ -33,7 +33,7 @@ async function loginUser(req, res) {
     res
       .cookie("userAuthToken", userAuthToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV,
+        secure: process.env.NODE_ENV === "production",
         sameSite: "None",
         maxAge: 24 * 60 * 60 * 1000,
       })
