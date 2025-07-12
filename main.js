@@ -7,6 +7,8 @@ port = process.env.PORT;
 // MongoDB Connection
 connectDB();
 
+console.log("Allowed frontend origin:", process.env.FRONTEND_URL);
+
 // Server
 app.listen(port, () => {
   console.log(
