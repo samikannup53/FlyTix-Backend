@@ -48,7 +48,6 @@ async function initiateForgotPassword(req, res) {
       .cookie("resetSessionToken", resetSessionToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "None",
         maxAge: 10 * 60 * 1000,
       })
       .status(200)
