@@ -32,7 +32,7 @@ async function loginUser(req, res) {
     // Send Token via Cookie
     res
       .cookie("userAuthToken", userAuthToken, {
-        httpOnly: false,
+        httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "None",
         maxAge: 24 * 60 * 60 * 1000,
@@ -41,6 +41,7 @@ async function loginUser(req, res) {
       .json({ msg: "Login Successful" });
   } catch (error) {
     res.status(500).json({ msg: "Server Error", error: error.message });
+    console.error(error);
   }
 }
 
