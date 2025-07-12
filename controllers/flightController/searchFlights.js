@@ -76,8 +76,8 @@ async function searchFlights(req, res) {
     // Send Session ID in Cookie
     res.cookie("sessionId", sessionId, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "Lax",
+      secure: process.env.NODE_ENV,
+      sameSite: "None",
       // maxAge: 1000 * 60 * 30,
     });
 
