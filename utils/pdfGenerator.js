@@ -4,13 +4,11 @@ const path = require("path");
 const QRCode = require("qrcode");
 
 const generateTicketHTML = require("../templates/ticketTemplate");
-const { channel } = require("diagnostics_channel");
 
 async function generatePDF(data, outputPath) {
   try {
     const logoPath = path.join(__dirname, "../assets/images/logo.png");
 
-    // Safely check logo exists
     if (!fs.existsSync(logoPath)) {
       throw new Error(`Logo file not found at ${logoPath}`);
     }
@@ -22,9 +20,8 @@ async function generatePDF(data, outputPath) {
     const html = generateTicketHTML({ ...data, logoBase64, qrBase64 });
 
     const browser = await puppeteer.launch({
-      channel: "chrome",
-      headless: true,
-      args: chrome.args,
+      headless: "new", // required for Puppeteer v24+
+      args: ["--no-sandbox", "--disable-setuid-sandbox"], // required for most serverless platforms
     });
 
     const page = await browser.newPage();
