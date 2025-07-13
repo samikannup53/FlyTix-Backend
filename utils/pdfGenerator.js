@@ -21,6 +21,7 @@ async function generatePDF(data, outputPath) {
     const html = generateTicketHTML({ ...data, logoBase64, qrBase64 });
 
     const browser = await puppeteer.launch({
+      channel: "chrome",
       headless: "new",
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
