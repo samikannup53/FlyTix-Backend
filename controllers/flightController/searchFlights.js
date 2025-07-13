@@ -77,7 +77,7 @@ async function searchFlights(req, res) {
     res.cookie("sessionId", sessionId, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "None",
+      sameSite: "Lax",
       maxAge: 60 * 60 * 1000,
     });
 
