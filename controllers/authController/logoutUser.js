@@ -4,7 +4,7 @@ function logoutUser(req, res) {
     .clearCookie("userAuthToken", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "Strict",
+      sameSite: "None",
     })
     .status(200)
     .json({ msg: "Logout Successful" });
