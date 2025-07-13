@@ -4,6 +4,7 @@ const path = require("path");
 const QRCode = require("qrcode");
 
 const generateTicketHTML = require("../templates/ticketTemplate");
+const { channel } = require("diagnostics_channel");
 
 async function generatePDF(data, outputPath) {
   try {
@@ -21,8 +22,9 @@ async function generatePDF(data, outputPath) {
     const html = generateTicketHTML({ ...data, logoBase64, qrBase64 });
 
     const browser = await puppeteer.launch({
-      headless: "new",
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      channel: "chrome",
+      headless: true,
+      args: chrome.args,
     });
 
     const page = await browser.newPage();
